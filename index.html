@@ -1,0 +1,53 @@
+<!-- //====================== WEB VIEW SIDE  ===========================
+///////================================================================= -->
+
+<html>
+	<head>
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript">
+
+			var socket = io.connect('/');
+
+			socket.on('connect', function() {
+				console.log("Connected to the server!");
+				
+			});
+
+			//recieve image from the server
+			socket.on('image', function (data) {
+                console.log("Got an image from the server!");
+				document.getElementById('imagefile').src = data;
+            });
+
+    
+		</script>
+	</head>
+
+
+	<body>
+		
+<!-- 		<button name="snapButton" id="snapButton" > SNAP </button>
+
+		<video id="thevideo" width="320" height="240" autoplay></video>
+
+		fromServer: <img src="" id="sentfile"> -->
+
+		<img src="" id="imagefile">
+		<!-- <canvas id="thecanvas" width="320" height="240"></canvas>  -->
+
+
+	</body>
+
+	<style>
+/*		#imagefile{
+			display:none;
+		}
+		#thecanvas{
+			display:none;
+		}*/
+	</style>
+
+</html>
+
+
+

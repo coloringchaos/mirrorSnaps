@@ -1,0 +1,91 @@
+<!-- //====================== CAMERA SIDE  ===========================
+///////=============================================================== -->
+
+<html>
+	<head>
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript">
+
+			var socket = io.connect('/');
+
+			socket.on('connect', function() {
+				console.log("Connected to the server!");
+			});
+
+			//recieve image from the server
+			socket.on('image', function (data) {
+                console.log("Got an image from the server!");
+				document.getElementById('sentfile').src = data;
+            });
+
+            var initWebRTC = function() {
+		
+				window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+				
+				// get the video element - the element on the page to display the webcam
+				var video = document.getElementById('thevideo');
+
+				// if we have the method
+				if (navigator.getUserMedia) {
+					navigator.getUserMedia({video: true}, function(stream) { 
+						video.src = window.URL.createObjectURL(stream) || stream;  //set the video element to receive input from the webcam
+						video.play();
+					}, function(error) {alert("Failure " + error.code);});
+				}
+
+				var thecanvas = document.getElementById('thecanvas');
+				var thecontext = thecanvas.getContext('2d');
+
+				//button snap stuff
+				var button = document.getElementById("snapButton");
+				
+				button.onclick = function() { 
+					console.log("SNAPPED");
+
+					//draw image to the canvas
+					thecontext.drawImage(video,0,0,video.width,video.height);
+
+					var dataUrl = thecanvas.toDataURL('image/webp', 1);
+
+					//draw dataURL image to the image element
+					document.getElementById('imagefile').src = dataUrl;
+
+					socket.emit('image', dataUrl);
+				}
+			};
+
+			document.addEventListener("DOMContentLoaded", initWebRTC, false);
+
+
+		</script>
+	</head>
+
+
+	<body>
+		
+		<button name="snapButton" id="snapButton" > SNAP </button>
+
+		<video id="thevideo" width="320" height="240" autoplay></video>
+
+		fromServer: <img src="" id="sentfile">
+
+		<!-- both of these are hidden using the css -->
+		<img src="" id="imagefile">
+		<canvas id="thecanvas" width="320" height="240"></canvas>
+
+	</body>
+
+	<style>
+		#imagefile{
+			display:none;
+		}
+		#thecanvas{
+			display:none;
+		}
+	</style>
+
+</html>
+
+
+
