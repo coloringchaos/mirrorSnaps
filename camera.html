@@ -3,7 +3,8 @@
 
 <html>
 	<head>
-		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<!-- // <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+		<script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
 		<script type="text/javascript">
 
 			var socket = io.connect('/');
@@ -46,7 +47,7 @@
 					//draw image to the canvas
 					thecontext.drawImage(video,0,0,video.width,video.height);
 
-					var dataUrl = thecanvas.toDataURL('image/webp', 1);
+					var dataUrl = thecanvas.toDataURL('img/webp', 1);
 
 					//draw dataURL image to the image element
 					document.getElementById('imagefile').src = dataUrl;

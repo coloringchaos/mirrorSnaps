@@ -3,6 +3,7 @@
 
 <html>
 	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 		<script type="text/javascript">
 
@@ -10,41 +11,48 @@
 
 			socket.on('connect', function() {
 				console.log("Connected to the server!");
-				
+
+				socket.emit('fileRequest');
 			});
 
-			//recieve image from the server
-			socket.on('image', function (data) {
-                console.log("Got an image from the server!");
-				document.getElementById('imagefile').src = data;
+			//on connect, recieve all image file names from the server
+            socket.on('files', function(data) {
+            	var fileArray = data;
+
+            	for (var i=0; i<fileArray.length; i++) {
+            		console.log(fileArray[i]);
+
+            		$( "#container" ).prepend(
+	                	'<div class="image-holder">'+
+	                		'<img src="images/'+fileArray[i]+'" >'+
+	                	'</div>'
+                	);
+
+            	}
             });
 
-    
+			//for receiving new snaps 
+			socket.on('image', function (data) {
+                console.log(data);
+                $( "#container" ).prepend(
+                	'<div class="image-holder">'+
+                		'<img src="'+data+'" >'+
+                	'</div>'
+                );
+            });
+
+
 		</script>
 	</head>
 
-
 	<body>
-		
-<!-- 		<button name="snapButton" id="snapButton" > SNAP </button>
-
-		<video id="thevideo" width="320" height="240" autoplay></video>
-
-		fromServer: <img src="" id="sentfile"> -->
-
-		<img src="" id="imagefile">
-		<!-- <canvas id="thecanvas" width="320" height="240"></canvas>  -->
-
+		<div id="container">
+		</div>
 
 	</body>
 
 	<style>
-/*		#imagefile{
-			display:none;
-		}
-		#thecanvas{
-			display:none;
-		}*/
+
 	</style>
 
 </html>
