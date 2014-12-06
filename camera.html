@@ -1,10 +1,18 @@
 <!-- //====================== CAMERA SIDE  ===========================
 ///////=============================================================== -->
 
+<!DOCTYPE html>
+
 <html>
 	<head>
-		<!-- // <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
+		<script src="js/gumhelper.js" defer></script>
+		<script src="js/Animated_GIF.js" defer></script>
+		<script src="js/videoShooter.js" defer></script>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 		<script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
+
 		<script type="text/javascript">
 
 			var socket = io.connect('/');
@@ -13,12 +21,8 @@
 				console.log("Connected to the server!");
 			});
 
-			//recieve image from the server
-			socket.on('image', function (data) {
-                console.log("Got an image from the server!");
-				document.getElementById('sentfile').src = data;
-            });
 
+			/*
             var initWebRTC = function() {
 		
 				window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
@@ -47,16 +51,82 @@
 					//draw image to the canvas
 					thecontext.drawImage(video,0,0,video.width,video.height);
 
-					var dataUrl = thecanvas.toDataURL('img/webp', 1);
+
+					///////////TRYING THIS CODE////////////////
+					//encode png format
+					//var imgData = thecanvas.toDataURL("img/png");
+
+					//remove extraneous data from start of string
+					//imgData = imgData.replace('data:image/png; base64,', '');
+
+					//JSON-encode it
+					//var postData = JSON.stringify({ imageData: imgData });
+
+					//post it to the server
+					//socket.emit('image', postData);
+					//////////////////////////////////////////
+
+
+					//commented out for testing - workes though
+					var dataUrl = thecanvas.toDataURL('img/png', 1);
 
 					//draw dataURL image to the image element
 					document.getElementById('imagefile').src = dataUrl;
 
-					socket.emit('image', dataUrl);
-				}
-			};
+					socket.emit('image', dataUrl); //this works...	
+				} //end of button.onclick
+			}; //end of initWebRTC
 
 			document.addEventListener("DOMContentLoaded", initWebRTC, false);
+			*/
+
+			function init() {
+				var videoContainer = document.getElementById('video');
+				var gifContainer = document.getElementById('gifContainer');
+				var videoWidth= 0, videoHeight = 0;
+				var videoElement;
+				var shooter;
+
+				document.getElementById('capture').addEventListener('click', startGifCapture);
+
+				GumHelper.startVideoStreaming(function(error, stream, videoEl, width, height) {
+					if(error) {
+						alert('Cannot open the camera. Make sure to allow the camera, or try refreshing the page.' + error.message);
+						return;
+					}
+
+					videoElement = videoEl;
+					videoElement.width = width;
+					videoElement.height = height;
+					videoWidth = width;
+					videoHeight = height;
+
+					videoContainer.appendChild(videoElement);
+
+					shooter = new VideoShooter(videoElement);
+				});
+
+
+				function startGifCapture() {
+					socket.emit('captureStarted');
+					//console.log("Capturing...");
+					// 30 is the total number of frames it takes... you can change that
+					// 0.2 is how often it takes a new frame .. i.e. 0.2 seconds... you can change taht
+					shooter.getShot(onFrameCaptured, 10, 0.25, function onProgress(progress) {
+						console.log(progress); //let's you know the current progress of the gif capture
+					});
+				}
+
+				function onFrameCaptured(pictureData) {
+					console.log("GIF IS DONE!")
+
+					//send pictureData to the server to be saved!
+					socket.emit('gif', pictureData);
+
+				}
+			}
+
+			window.addEventListener('DOMContentLoaded', init);
 
 
 		</script>
@@ -64,29 +134,23 @@
 
 
 	<body>
+
+	    <button id="capture">Start Gif Capture</button>
+
+		<div id="video"></div>
+
+		<!-- <div id="gifContainer"> </div> -->
 		
-		<button name="snapButton" id="snapButton" > SNAP </button>
-
-		<video id="thevideo" width="320" height="240" autoplay></video>
-
-		fromServer: <img src="" id="sentfile">
-
-		<!-- both of these are hidden using the css -->
-		<img src="" id="imagefile">
-		<canvas id="thecanvas" width="320" height="240"></canvas>
-
 	</body>
 
 	<style>
-		#imagefile{
-			display:none;
-		}
-		#thecanvas{
-			display:none;
-		}
 	</style>
 
 </html>
+
+
+
+
 
 
 

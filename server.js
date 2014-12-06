@@ -12,7 +12,7 @@ console.log("Listening on 4000");
 function requestHandler(req, res) {
 
 	var parsedUrl = url.parse(req.url);
-	console.log("The Request is: " + parsedUrl.pathname);
+	//console.log("The Request is: " + parsedUrl.pathname);
 	
 	// Read index.html
 	
@@ -37,13 +37,16 @@ function requestHandler(req, res) {
 
 var io = require('socket.io').listen(httpServer);
 
-var currentImage = null;
+// for saving filenames with timeStamps
+var d = new Date();
+
+
 
 io.sockets.on('connection', // This is run for each individual user that connects
 	function (socket) {
 		console.log("We have a new client: " + socket.id);
 
-		// send client all existing images on index page connect
+		// send client all existing images to index page on connect
 		socket.on('fileRequest', function(data) {
 			console.log("INDEX PAGE CONNECTED!");
 
@@ -55,32 +58,41 @@ io.sockets.on('connection', // This is run for each individual user that connect
 			        console.log("Error listing file contents.");
 			    } else {
 			    	
-			    	// var fileString = JSON.stringify(files);
-
-			    	// console.log(fileString);
-
 			    	socket.emit("files", files);
 			    }
 			});
 		});
 
-		//recieved image that was sent from camera.html - save this image to the server!
-		socket.on('image', function(data) {
-			currentImage = data;
-			console.log("Received: 'image' ");
-			io.sockets.emit('image',data);
+		//recieved image from the camera
+		socket.on('gif', function(data) {
+		
+			var day = d.getDate();
 
+			if (d.getDate() < 10) {
+				day = '0' + day;
+			}
+
+			var timeStamp = (d.getFullYear() + '-' + (d.getMonth()+1) + '-' + day + '_' +  d.getHours() + '-' + d.getMinutes() + '-' + d.getSeconds());
+			console.log("RECIEVED GIF  " + timeStamp);
+
+			//save the image to the server
 			var fs = require('fs');
-			var base64Data = data.replace(/^data:image\/webp;base64,/, "");
 
-			fs.writeFile("out.webp", base64Data, 'base64', function(err) {
-        		if (err) {
-                	console.log(err);
-        		} else {
-                	console.log("WRote image");
-        		}
-			});
+			var searchFor = "data:image/jpeg;base64,";
+			var strippedImage = data.slice(data.indexOf(searchFor) + searchFor.length);
+			var binaryImage = new Buffer(strippedImage, 'base64');
+			fs.writeFileSync(__dirname + '/images/' + timeStamp +'.gif', binaryImage);
+
+			//emit the image back to everyone 
+			io.sockets.emit('image',data);
 		});
+
+
+		socket.on('captureStarted', function() {
+			console.log("capturing gif... ")
+			socket.broadcast.emit('captureStarted');
+		});
+
 		
 		socket.on('disconnect', function() {
 			console.log("Client has disconnected " + socket.id);

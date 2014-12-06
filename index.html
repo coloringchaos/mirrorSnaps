@@ -19,6 +19,8 @@
             socket.on('files', function(data) {
             	var fileArray = data;
 
+            	//TODO: deal with .ds file - how to ignore this??
+
             	for (var i=0; i<fileArray.length; i++) {
             		console.log(fileArray[i]);
 
@@ -27,13 +29,12 @@
 	                		'<img src="images/'+fileArray[i]+'" >'+
 	                	'</div>'
                 	);
-
             	}
             });
 
 			//for receiving new snaps 
 			socket.on('image', function (data) {
-                console.log(data);
+                console.log("RECEIVED AN IMAGE FROM THE CAMERA!");
                 $( "#container" ).prepend(
                 	'<div class="image-holder">'+
                 		'<img src="'+data+'" >'+
@@ -41,17 +42,72 @@
                 );
             });
 
+			//someone pressed the button!
+            socket.on('captureStarted', function() {
+            	console.log("CAPTURE STARTED!");
+            });
+
 
 		</script>
 	</head>
 
 	<body>
+		<div id="header">
+			<!-- <span class = 'right'mirror snaps -->
+			<span class="right"><span>MIRROR SNAPS</span></span>
+		</div>
+
+
 		<div id="container">
 		</div>
 
 	</body>
 
 	<style>
+		body {
+			font-family: 'Lato', Calibri, Arial, sans-serif;
+			color: #b3b9bf;
+			background: #f9f9f9;
+			margin: 0;
+
+		}
+
+		/* Header Style */
+/*		.contain > header {
+			margin: 0 auto;
+			padding: 2em;
+			text-align: center;
+			background: rgba(0,0,0,0.01);
+		}
+
+		.contain > header h1 {
+			font-size: 2.625em;
+			line-height: 1.3;
+			margin: 0;
+			font-weight: 300;
+		}*/
+
+		#container{
+			
+		}
+
+		.image-holder{
+
+		}
+
+		#header{
+			display: block;
+			width: 100%;
+			line-height: 6;
+			font-size: 2em;
+			text-transform: uppercase;
+			background: #FFFFFF;
+			margin-bottom: 2;
+			text-align: center;
+			padding: .5;
+
+
+		}
 
 	</style>
 
