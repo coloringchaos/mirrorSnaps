@@ -5,6 +5,9 @@
 
 <html>
 	<head>
+		<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+		<link href="style.css" type="text/css" rel="stylesheet" />
+
 		<script src="js/gumhelper.js" defer></script>
 		<script src="js/Animated_GIF.js" defer></script>
 		<script src="js/videoShooter.js" defer></script>
@@ -28,7 +31,7 @@
 				var videoElement;
 				var shooter;
 
-				document.getElementById('capture').addEventListener('click', startGifCapture);
+				document.getElementById('captureButton').addEventListener('click', startGifCapture);
 
 				GumHelper.startVideoStreaming(function(error, stream, videoEl, width, height) {
 					if(error) {
@@ -74,11 +77,20 @@
 
 
 	<body>
+		<div id="top-stripe"> </div>
 
-	    <button id="capture">Start Gif Capture</button>
+		<div id="header">
+			<h1> SNAP A GIF </h1>
+		</div>
 
-		<div id="video"></div>
-		
+		<div id ="content-container">
+			<button id="captureButton" class="buttons">Start Gif Capture</button>
+			<div id="video"></div>
+		</div>
+
+	    
+
+		<div id="footer"> a</div>
 	</body>
 
 </html>

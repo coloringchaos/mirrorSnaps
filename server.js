@@ -39,6 +39,7 @@ var io = require('socket.io').listen(httpServer);
 
 // for saving filenames with timeStamps
 var d = new Date();
+var timestamp;
 
 
 
@@ -63,17 +64,16 @@ io.sockets.on('connection', // This is run for each individual user that connect
 			});
 		});
 
+		socket.on('captureStarted', function() {
+			console.log("capturing gif... ")
+			socket.broadcast.emit('captureStarted');
+		});
+
 		//recieved image from the camera
 		socket.on('gif', function(data) {
 		
-			var day = d.getDate();
-
-			if (d.getDate() < 10) {
-				day = '0' + day;
-			}
-
-			var timeStamp = (d.getFullYear() + '-' + (d.getMonth()+1) + '-' + day + '_' +  d.getHours() + '-' + d.getMinutes() + '-' + d.getSeconds());
-			console.log("RECIEVED GIF  " + timeStamp);
+			getTimestamp();
+			console.log("RECIEVED GIF, SAVING TO THE SERVER!  " + timeStamp);
 
 			//save the image to the server
 			var fs = require('fs');
@@ -87,16 +87,36 @@ io.sockets.on('connection', // This is run for each individual user that connect
 			io.sockets.emit('image',data);
 		});
 
-
-		socket.on('captureStarted', function() {
-			console.log("capturing gif... ")
-			socket.broadcast.emit('captureStarted');
-		});
-
-		
 		socket.on('disconnect', function() {
 			console.log("Client has disconnected " + socket.id);
 		});
 	}
 );
 
+
+function getTimestamp() {
+	var day = d.getDate();
+	var month = d.getMonth() + 1;	//month starts at 0...
+	var hours = d.getHours();
+	var minutes = d.getMinutes();
+	var seconds = d.getSeconds();
+
+	//TODO - - - - - FORMAT THIS USING A PROTOTYPE FUNCTION????
+	if (day < 10) {
+		day = '0' + day;
+	}
+	if (month < 10) {
+		month = '0' + month;
+	}
+	if (hours < 10) {
+		hours = '0' + hours; 
+	}
+	if (minutes < 10) {
+		minutes = '0' + minutes;
+	}
+	if (seconds < 10) {
+		seconds = '0' + seconds;
+	}
+
+	timeStamp = (d.getFullYear() + '-' + month + '-' + day + '_' +  hours + '-' + minutes + '-' + seconds);
+}
