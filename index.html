@@ -3,6 +3,11 @@
 
 <html>
 	<head>
+		
+		<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Oswald:400,300' rel='stylesheet' type='text/css'>
+		<link href="style.css" type="text/css" rel="stylesheet" />
+
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 		<script type="text/javascript">
@@ -22,7 +27,7 @@
             	//TODO: deal with .ds file - how to ignore this??
 
             	for (var i=0; i<fileArray.length; i++) {
-            		console.log(fileArray[i]);
+            		// console.log(fileArray[i]);	//will list all images in the image folder 
 
             		$( "#container" ).prepend(
 	                	'<div class="image-holder">'+
@@ -35,9 +40,15 @@
 			//for receiving new snaps 
 			socket.on('image', function (data) {
                 console.log("RECEIVED AN IMAGE FROM THE CAMERA!");
+                img = data;
+
+                //TODO: resize the gif here!!!!!!!!
+                img.width = 400;
+            	img.height = 300;
+
                 $( "#container" ).prepend(
                 	'<div class="image-holder">'+
-                		'<img src="'+data+'" >'+
+                		'<img src="'+img+'" >'+
                 	'</div>'
                 );
             });
@@ -48,68 +59,55 @@
             });
 
 
+
+			function formatWindow() {
+				var w = window.innerWidth;
+            	console.log("window width is: " + w);
+
+            	// var imgPad = 1;
+            	// document.getElementBy
+
+            	if (w > 1620) {					// 4 COLUMN LAYOUT
+            		document.getElementById("container").style.width = 1616;
+            	}
+	            if (w < 1620 && w > 1220) { 	// 3 COLUMN LAYOUT
+	            	document.getElementById("container").style.width = 1212;
+	            }
+				if (w < 1220 && w > 820) { 		// 2 COLUMN LAYOUT
+	            	document.getElementById("container").style.width = 808;
+	            }
+
+	            //TODO: also set this for when it's a mobile device!!
+	            if (w < 820) {					// SINGLE COLUMN LAYOUT 
+	            	document.getElementById("container").style.width = 404;
+	            }
+			}
+
+			// using event listeners for formatting
+			window.addEventListener('resize', formatWindow);
+			window.addEventListener('DOMContentLoaded', formatWindow);
+
+
 		</script>
 	</head>
 
 	<body>
+		<div id="top-stripe"> </div>
+
 		<div id="header">
-			<!-- <span class = 'right'mirror snaps -->
-			<span class="right"><span>MIRROR SNAPS</span></span>
+			<h1> Mirror Snaps </h1>
 		</div>
 
 
-		<div id="container">
+		<div id ="content-container">
+
+			<div id="container">
+			</div>
+
 		</div>
 
 	</body>
 
-	<style>
-		body {
-			font-family: 'Lato', Calibri, Arial, sans-serif;
-			color: #b3b9bf;
-			background: #f9f9f9;
-			margin: 0;
-
-		}
-
-		/* Header Style */
-/*		.contain > header {
-			margin: 0 auto;
-			padding: 2em;
-			text-align: center;
-			background: rgba(0,0,0,0.01);
-		}
-
-		.contain > header h1 {
-			font-size: 2.625em;
-			line-height: 1.3;
-			margin: 0;
-			font-weight: 300;
-		}*/
-
-		#container{
-			
-		}
-
-		.image-holder{
-
-		}
-
-		#header{
-			display: block;
-			width: 100%;
-			line-height: 6;
-			font-size: 2em;
-			text-transform: uppercase;
-			background: #FFFFFF;
-			margin-bottom: 2;
-			text-align: center;
-			padding: .5;
-
-
-		}
-
-	</style>
 
 </html>
 

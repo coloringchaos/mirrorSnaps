@@ -21,65 +21,6 @@
 				console.log("Connected to the server!");
 			});
 
-
-			/*
-            var initWebRTC = function() {
-		
-				window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-				navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-				
-				// get the video element - the element on the page to display the webcam
-				var video = document.getElementById('thevideo');
-
-				// if we have the method
-				if (navigator.getUserMedia) {
-					navigator.getUserMedia({video: true}, function(stream) { 
-						video.src = window.URL.createObjectURL(stream) || stream;  //set the video element to receive input from the webcam
-						video.play();
-					}, function(error) {alert("Failure " + error.code);});
-				}
-
-				var thecanvas = document.getElementById('thecanvas');
-				var thecontext = thecanvas.getContext('2d');
-
-				//button snap stuff
-				var button = document.getElementById("snapButton");
-				
-				button.onclick = function() { 
-					console.log("SNAPPED");
-
-					//draw image to the canvas
-					thecontext.drawImage(video,0,0,video.width,video.height);
-
-
-					///////////TRYING THIS CODE////////////////
-					//encode png format
-					//var imgData = thecanvas.toDataURL("img/png");
-
-					//remove extraneous data from start of string
-					//imgData = imgData.replace('data:image/png; base64,', '');
-
-					//JSON-encode it
-					//var postData = JSON.stringify({ imageData: imgData });
-
-					//post it to the server
-					//socket.emit('image', postData);
-					//////////////////////////////////////////
-
-
-					//commented out for testing - workes though
-					var dataUrl = thecanvas.toDataURL('img/png', 1);
-
-					//draw dataURL image to the image element
-					document.getElementById('imagefile').src = dataUrl;
-
-					socket.emit('image', dataUrl); //this works...	
-				} //end of button.onclick
-			}; //end of initWebRTC
-
-			document.addEventListener("DOMContentLoaded", initWebRTC, false);
-			*/
-
 			function init() {
 				var videoContainer = document.getElementById('video');
 				var gifContainer = document.getElementById('gifContainer');
@@ -109,7 +50,6 @@
 
 				function startGifCapture() {
 					socket.emit('captureStarted');
-					//console.log("Capturing...");
 					// 30 is the total number of frames it takes... you can change that
 					// 0.2 is how often it takes a new frame .. i.e. 0.2 seconds... you can change taht
 					shooter.getShot(onFrameCaptured, 10, 0.25, function onProgress(progress) {
@@ -122,14 +62,14 @@
 
 					//send pictureData to the server to be saved!
 					socket.emit('gif', pictureData);
-
 				}
 			}
 
+
 			window.addEventListener('DOMContentLoaded', init);
 
-
 		</script>
+
 	</head>
 
 
@@ -138,13 +78,8 @@
 	    <button id="capture">Start Gif Capture</button>
 
 		<div id="video"></div>
-
-		<!-- <div id="gifContainer"> </div> -->
 		
 	</body>
-
-	<style>
-	</style>
 
 </html>
 
