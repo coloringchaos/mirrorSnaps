@@ -5,7 +5,7 @@
 
 <html>
 	<head>
-		<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+		<!-- <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'> -->
 		<link href="style.css" type="text/css" rel="stylesheet" />
 
 		<script src="js/gumhelper.js" defer></script>
@@ -68,7 +68,6 @@
 				}
 			}
 
-
 			window.addEventListener('DOMContentLoaded', init);
 
 		</script>
@@ -77,20 +76,24 @@
 
 
 	<body>
-		<div id="top-stripe"> </div>
+		<div id="stripe"> </div>
 
 		<div id="header">
 			<h1> SNAP A GIF </h1>
 		</div>
 
-		<div id ="content-container">
-			<button id="captureButton" class="buttons">Start Gif Capture</button>
-			<div id="video"></div>
+		<div id ="camera">
+
+			<div id="video-holder">
+				<div id="video"></div>
+			</div>
+
+			<div id="button-div">	
+				<button id="captureButton" class="buttons">Start Capture</button>
+			</div>
+		
 		</div>
 
-	    
-
-		<div id="footer"> a</div>
 	</body>
 
 </html>

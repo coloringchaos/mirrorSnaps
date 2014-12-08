@@ -26,16 +26,9 @@
             	for (var i=1; i<fileArray.length; i++) {		//starting at i=1 accommodates for the .ds file...
             		// console.log(fileArray[i]);	//will list all images in the image folder 
 
-            		//original code - THIS WORKS
-            		// $( "#container" ).prepend(
-	             //    	'<div class="image-holder">'+
-	             //    		'<img src="images/'+fileArray[i]+'" >'+
-	             //    	'</div>'
-              //   	);
-
-                	$( "#container" ).prepend(
+                	$( "#gif-container" ).prepend(
 	                	'<div class="image-holder">'+
-	                		'<img src="images/'+fileArray[i]+'" width='+400+' >'+
+	                		'<img src="images/'+fileArray[i]+'" width='+400+' height='+300+' >'+
 	                	'</div>'
                 	);
             	}
@@ -46,11 +39,9 @@
                 console.log("RECEIVED AN IMAGE FROM THE CAMERA!");
                 img = data;
 
-                //TODO: resize the gif here!!!!!!!!
-
-                $( "#container" ).prepend(
+                $( "#gif-container" ).prepend(
                 	'<div class="image-holder">'+
-                		'<img src="'+img+'" width='+400+' >'+
+                		'<img src="'+img+'" width='+400+' height='+300+' >'+
                 	'</div>'
                 );
             });
@@ -65,22 +56,20 @@
 				var w = window.innerWidth;
             	console.log("window width is: " + w);
 
-            	// var imgPad = 1;
-            	// document.getElementBy
 
             	if (w > 1620) {					// 4 COLUMN LAYOUT
-            		document.getElementById("container").style.width = 1616;
+            		document.getElementById("gif-container").style.width = 1600;
             	}
 	            if (w < 1620 && w > 1220) { 	// 3 COLUMN LAYOUT
-	            	document.getElementById("container").style.width = 1212;
+	            	document.getElementById("gif-container").style.width = 1200;
 	            }
 				if (w < 1220 && w > 820) { 		// 2 COLUMN LAYOUT
-	            	document.getElementById("container").style.width = 808;
+	            	document.getElementById("gif-container").style.width = 800;
 	            }
 
 	            //TODO: also set this for when it's a mobile device!!
 	            if (w < 820) {					// SINGLE COLUMN LAYOUT 
-	            	document.getElementById("container").style.width = 404;
+	            	document.getElementById("gif-container").style.width = 400;
 	            }
 			}
 
@@ -93,7 +82,7 @@
 	</head>
 
 	<body>
-		<div id="top-stripe"> </div>
+		<div id="stripe"> </div>
 
 		<div id="header">
 			<h1> Mirror Snaps </h1>
@@ -102,17 +91,19 @@
 
 		<div id ="content-container">
 
-			<div id="container">
+			<div id="gif-container">
 			</div>
 
 		</div>
 
-		<div id="footer"> hello</div>
+		<div id="footer"> </div>
 
 	</body>
 
 
 </html>
+
+
 
 
 
