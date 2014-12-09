@@ -5,7 +5,7 @@
 
 <html>
 	<head>
-		<!-- <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'> -->
+		<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 		<link href="style.css" type="text/css" rel="stylesheet" />
 
 		<script src="js/gumhelper.js" defer></script>
@@ -24,14 +24,100 @@
 				console.log("Connected to the server!");
 			});
 
+			var theTimeout;
+
+			function setbackground() {
+			    theTimeout = window.setTimeout("setbackground()", 70); //  milliseconds delay
+
+			    var index = Math.round(Math.random() * 9);
+			    var ColorValue = "FFFFFF"; // default color - white (index = 0)
+
+			    if(index == 1)
+			        ColorValue = "66FF33";
+			    if(index == 2)
+			    	ColorValue = "20EEE1";
+			    if(index == 3)
+			        ColorValue = "FF00FF"; 
+			    if(index == 4)
+			        ColorValue = "0000FF"; 
+			    if(index == 5)
+			        ColorValue = "00FFFF"; 
+			    if(index == 6)
+			        ColorValue = "FFFF00"; 
+			    if(index == 7)
+			       ColorValue = "CC66FF"; 
+			    if(index == 8)
+			        ColorValue = "3366FF"; 
+			   	if(index == 9)
+			        ColorValue = "CCCCCC"; 
+
+			   	document.getElementById("video-holder").style.border = "solid #" + ColorValue + " 15px";
+			   	document.getElementById("button").style.display = "none";
+			}
+
+			function stopBackground() {
+				clearTimeout(theTimeout);
+				document.getElementById("video-holder").style.border = "solid #FFFFFF 15px";
+				document.getElementById("button").style.display = "";
+
+				//TODO - put a smily face or some graphic??
+			}
+
+			//TODO - clean up these functions so that they can be called on any element...
+
+			var anotherTimeout;
+			
+			function overButton() {
+			    anotherTimeout = window.setTimeout("overButton()", 50); //  milliseconds delay
+
+			    var index = Math.round(Math.random() * 9);
+			    var ColorValue = "FFFFFF"; // default color - white (index = 0)
+
+			    if(index == 1)
+			        ColorValue = "66FF33";
+			    if(index == 2)
+			    	ColorValue = "20EEE1";
+			    if(index == 3)
+			        ColorValue = "FF00FF"; 
+			    if(index == 4)
+			        ColorValue = "0000FF"; 
+			    if(index == 5)
+			        ColorValue = "00FFFF"; 
+			    if(index == 6)
+			        ColorValue = "FFFF00"; 
+			    if(index == 7)
+			       ColorValue = "CC66FF"; 
+			    if(index == 8)
+			        ColorValue = "3366FF"; 
+			   	if(index == 9)
+			        ColorValue = "CCCCCC"; 
+
+			   	document.getElementById("button").style.backgroundColor = "#" + ColorValue;
+			}
+
+			function stopButton() {
+				clearTimeout(anotherTimeout);
+				document.getElementById("button").style.backgroundColor = "transparent ";
+			}
+
+	////////////////////
+
 			function init() {
 				var videoContainer = document.getElementById('video');
 				var gifContainer = document.getElementById('gifContainer');
 				var videoWidth= 0, videoHeight = 0;
 				var videoElement;
 				var shooter;
+			
+				//TODO: function here to check when button is pressed - should do countdown then startGifCapture
+				document.getElementById('button').addEventListener('click', startGifCapture);
 
-				document.getElementById('captureButton').addEventListener('click', startGifCapture);
+
+
+				//eventlisteners for mouseover the BUTTON
+				document.getElementById('button').addEventListener('mouseover', function() { overButton(); });
+				document.getElementById('button').addEventListener('mouseout', function() { stopButton(); });
+
 
 				GumHelper.startVideoStreaming(function(error, stream, videoEl, width, height) {
 					if(error) {
@@ -53,22 +139,32 @@
 
 				function startGifCapture() {
 					socket.emit('captureStarted');
+					setbackground();
+
 					// 30 is the total number of frames it takes... you can change that
 					// 0.2 is how often it takes a new frame .. i.e. 0.2 seconds... you can change taht
 					shooter.getShot(onFrameCaptured, 10, 0.25, function onProgress(progress) {
-						console.log(progress); //let's you know the current progress of the gif capture
+						// console.log(progress); //let's you know the current progress of the gif capture
+
+						if (progress == 1) {
+							stopBackground();
+						}
+
 					});
 				}
 
 				function onFrameCaptured(pictureData) {
 					console.log("GIF IS DONE!")
 
-					//send pictureData to the server to be saved!
-					socket.emit('gif', pictureData);
+					socket.emit('gif', pictureData);	//send pictureData to the server to be saved!
 				}
-			}
+
+			} //END OF INIT
 
 			window.addEventListener('DOMContentLoaded', init);
+
+
+
 
 		</script>
 
@@ -76,22 +172,22 @@
 
 
 	<body>
-		<div id="stripe"> </div>
+
+		<div id="stripe" > </div>
 
 		<div id="header">
 			<h1> SNAP A GIF </h1>
 		</div>
 
+
 		<div id ="camera">
 
 			<div id="video-holder">
 				<div id="video"></div>
-			</div>
 
-			<div id="button-div">	
-				<button id="captureButton" class="buttons">Start Capture</button>
+				<button id="button" class="btn">Start Capture</button>
+			
 			</div>
-		
 		</div>
 
 	</body>
