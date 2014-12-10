@@ -22,10 +22,25 @@
 
 			socket.on('connect', function() {
 				console.log("Connected to the server!");
+
 			});
 
-			var theTimeout;
+		////////////////////////////////////////
+		// STATE CHANGE STUFF
 
+
+		//waiting for camera to be allowed
+		//mobile device is connected
+		//gif is being captured
+		//gif is being saved
+
+
+
+		////////////////////////////////////////
+		// BLINKING COLOR STUFF
+
+			//TODO - clean up these functions so that they can be called on any element...
+			var theTimeout;
 			function setbackground() {
 			    theTimeout = window.setTimeout("setbackground()", 70); //  milliseconds delay
 
@@ -54,7 +69,6 @@
 			   	document.getElementById("video-holder").style.border = "solid #" + ColorValue + " 15px";
 			   	document.getElementById("button").style.display = "none";
 			}
-
 			function stopBackground() {
 				clearTimeout(theTimeout);
 				document.getElementById("video-holder").style.border = "solid #FFFFFF 15px";
@@ -63,10 +77,8 @@
 				//TODO - put a smily face or some graphic??
 			}
 
-			//TODO - clean up these functions so that they can be called on any element...
-
+		
 			var anotherTimeout;
-			
 			function overButton() {
 			    anotherTimeout = window.setTimeout("overButton()", 50); //  milliseconds delay
 
@@ -94,15 +106,21 @@
 
 			   	document.getElementById("button").style.backgroundColor = "#" + ColorValue;
 			}
-
 			function stopButton() {
 				clearTimeout(anotherTimeout);
 				document.getElementById("button").style.backgroundColor = "transparent ";
 			}
 
-	////////////////////
 
+		////////////////////////////////////////
+		// TODO - - - > COUNTDOWN FUNCTION, after countdown startGifCapture
+
+
+		////////////////////////////////////////
+		// GETUSERMEDIA & GIF CREATION STUFF
 			function init() {
+				document.getElementById('button').innerHTML = "Please allow<br>your camera!";
+
 				var videoContainer = document.getElementById('video');
 				var gifContainer = document.getElementById('gifContainer');
 				var videoWidth= 0, videoHeight = 0;
@@ -112,14 +130,38 @@
 				//TODO: function here to check when button is pressed - should do countdown then startGifCapture
 				document.getElementById('button').addEventListener('click', startGifCapture);
 
+				socket.on('touchStarted', function() {
+					console.log("touch started");
 
+					countdown();	//runs countdown then starts capturing gif
+				});
 
-				//eventlisteners for mouseover the BUTTON
+				socket.on('touchEnded', function() {
+					console.log("touch ended");
+					// stopBackground();
+				});
+
+				socket.on('image', function() {
+					document.getElementById('button').style.display = "";
+					document.getElementById('button').innerHTML = "Use your<br>phone to<br>snap a gif!";
+				});
+				
+				//find out when mobile device is connected - controls visibility of the capture button 
+				socket.on('mobileConnected', function() {
+					console.log("MOBILE DEVICE CONNECTED!!!!!!!!!");
+					document.getElementById('button').innerHTML = "Use your<br>phone to<br>snap a gif!";
+				});
+
+				// ANIMATE THE BUTTON ON MOUSE HOVER!
 				document.getElementById('button').addEventListener('mouseover', function() { overButton(); });
 				document.getElementById('button').addEventListener('mouseout', function() { stopButton(); });
 
 
 				GumHelper.startVideoStreaming(function(error, stream, videoEl, width, height) {
+
+					document.getElementById('button').innerHTML = "Click or use<br>you phone to<br>snap a gif!";
+					socket.emit('cameraReady');
+
 					if(error) {
 						alert('Cannot open the camera. Make sure to allow the camera, or try refreshing the page.' + error.message);
 						return;
@@ -136,7 +178,6 @@
 					shooter = new VideoShooter(videoElement);
 				});
 
-
 				function startGifCapture() {
 					socket.emit('captureStarted');
 					setbackground();
@@ -148,8 +189,12 @@
 
 						if (progress == 1) {
 							stopBackground();
-						}
+							// document.getElementById('button').innerHTML = "Saving...";
+							document.getElementById('button').style.display = "none";
 
+
+							socket.emit('gifDone');
+						}
 					});
 				}
 
@@ -159,17 +204,17 @@
 					socket.emit('gif', pictureData);	//send pictureData to the server to be saved!
 				}
 
+				function countdown() {
+					console.log("doing countdown, then starting gif capture");
+					startGifCapture();
+				}
+
 			} //END OF INIT
 
 			window.addEventListener('DOMContentLoaded', init);
 
-
-
-
 		</script>
-
 	</head>
-
 
 	<body>
 
@@ -185,7 +230,7 @@
 			<div id="video-holder">
 				<div id="video"></div>
 
-				<button id="button" class="btn">Start Capture</button>
+				<button id="button" class="btn">Waiting...</button>
 			
 			</div>
 		</div>

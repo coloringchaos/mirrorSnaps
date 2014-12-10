@@ -31,7 +31,6 @@ function requestHandler(req, res) {
   	);
 }
 
-
 //=================== WEBSOCKETS PORTION ==========================
 //=================================================================
 
@@ -41,13 +40,12 @@ var io = require('socket.io').listen(httpServer);
 var d = new Date();
 var timestamp;
 
-
-
 io.sockets.on('connection', // This is run for each individual user that connects
 	function (socket) {
 		console.log("We have a new client: " + socket.id);
 
 		// send client all existing images to index page on connect
+		//fileRequest only comes from index.html page 
 		socket.on('fileRequest', function(data) {
 			console.log("INDEX PAGE CONNECTED!");
 
@@ -64,13 +62,35 @@ io.sockets.on('connection', // This is run for each individual user that connect
 			});
 		});
 
+		//find out when mobile device is connected - controls visibility of the capture button 
+		socket.on('mobileConnected', function() {
+			socket.broadcast.emit('mobileConnected');
+			console.log("MOBILE DEVICE CONNECTED!!!!!!!!!");
+		});
+
+		socket.on('cameraReady', function() {
+			//video is streaming, ready to capture gif
+			console.log("CAMERA IS READY");
+		});
+
 		socket.on('captureStarted', function() {
 			console.log("capturing gif... ")
 			socket.broadcast.emit('captureStarted');
 		});
 
+		socket.on('touchStarted', function() {
+			console.log("TOUCH STARTED +++++++++++ ");
+			io.sockets.emit('touchStarted');
+		});
+
+		socket.on('touchEnded', function() {
+			console.log("TOUCH ENDED ------------ ");
+			io.sockets.emit('touchEnded');
+		});
+
 		//recieved image from the camera
 		socket.on('gif', function(data) {
+			socket.broadcast.emit('serverGotGif');
 		
 			getTimestamp();
 			console.log("RECIEVED GIF, SAVING TO THE SERVER!  " + timeStamp);

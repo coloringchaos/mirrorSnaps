@@ -32,7 +32,7 @@ h1, h2 {
 #gif-container {	
 	margin-left: auto;
 	margin-right:auto;
-	border: solid #FFFFFF 15px;	/* teal border */
+	/*border: solid #FFFFFF 15px;	/* teal border */*/
 }
 
 .image-holder{
@@ -80,7 +80,7 @@ h1, h2 {
 	-moz-border-radius: 0;
 	position: absolute;
 	width:200px;
-	height:40px;
+	height:160px;
 	color:#FFFFFF;
 	border: solid #FFFFFF 1px;
 	background-color: transparent;
@@ -91,12 +91,13 @@ h1, h2 {
 	font-weight: 400;
 	left: 50%;
 	top:50%;
-	margin: -20px 0 0 -100px;
+	margin: -80px 0 0 -100px;
+	line-height: 2em;
 }
 
 .btn:hover {
 	border: solid #FFFFFF 1px;
-	background: #f618c7;
+	/*background: #f618c7;*/
 }
 
 .btn:focus {
@@ -106,4 +107,59 @@ h1, h2 {
 .btn:active {
 	outline: none;
 	border: none;
+}
+
+
+.pBtn {
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	position: absolute;
+	width:600px;
+	height:100px;
+	color:#000000;
+	border: solid #000000 1px;
+	background-color: transparent;
+	font-size: 2em;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	text-align: center;
+	font-weight: 500;
+	left: 50%;
+	top:50%;
+	margin: -50px 0 0 -300px;
+}
+
+.pBtn:hover {
+	border: solid #20EEE1 1px;
+	/*background: #f618c7;*/
+}
+
+.pBtn:focus {
+	outline:0 !important;
+}
+
+.pBtn:active {
+	outline: none;
+	border: none;
+}
+
+#box1 {
+	position: absolute;
+	width:700px;
+	height:700px;
+	color:#000000;
+	border: solid #000000 5px;
+	background-color: transparent;
+	font-size: 2.5em;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	text-align: center;
+	font-weight: 600;
+	left: 50%;
+	top: 35%;
+	margin: -350px 0 0 -350px;
+	line-height: 12;
+}
+.box{
+	/*top: 50%;*/
 }
