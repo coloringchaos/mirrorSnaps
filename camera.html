@@ -130,6 +130,11 @@
 				//TODO: function here to check when button is pressed - should do countdown then startGifCapture
 				document.getElementById('button').addEventListener('click', startGifCapture);
 
+				socket.on('click', function() {
+					console.log("CLICK");
+					startGifCapture();
+				});
+
 				socket.on('touchStarted', function() {
 					console.log("touch started");
 

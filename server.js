@@ -36,8 +36,6 @@ function requestHandler(req, res) {
 
 var io = require('socket.io').listen(httpServer);
 
-// for saving filenames with timeStamps
-var d = new Date();
 var timestamp;
 
 io.sockets.on('connection', // This is run for each individual user that connects
@@ -110,11 +108,16 @@ io.sockets.on('connection', // This is run for each individual user that connect
 		socket.on('disconnect', function() {
 			console.log("Client has disconnected " + socket.id);
 		});
+
+		// myPort.on('data', function(data) {
+		// 	console.log(data);
+		// });
 	}
 );
 
 
 function getTimestamp() {
+	var d = new Date();
 	var day = d.getDate();
 	var month = d.getMonth() + 1;	//month starts at 0...
 	var hours = d.getHours();
@@ -139,4 +142,53 @@ function getTimestamp() {
 	}
 
 	timeStamp = (d.getFullYear() + '-' + month + '-' + day + '_' +  hours + '-' + minutes + '-' + seconds);
+}
+
+
+//=================== SERIAL COMMUNICATION STUFF ==========================
+//=========================================================================
+
+var oldData;
+
+var serialport = require('serialport'),// include the library
+   SerialPort = serialport.SerialPort, // make a local instance of it
+
+   portName = '/dev/cu.usbmodem1411';  //connect to my USB port
+
+var myPort = new SerialPort(portName, {
+   baudRate: 9600,
+   // look for return and newline at the end of each data packet:
+   parser: serialport.parsers.readline("\r\n")
+});
+
+myPort.on('open', showPortOpen);
+myPort.on('data', saveLatestData);
+myPort.on('close', showPortClose);
+myPort.on('error', showError);
+
+function showPortOpen() {
+   console.log('port open. Data rate: ' + myPort.options.baudRate);
+}
+
+function saveLatestData(data) {
+	if (oldData != data) {
+      	console.log(data);
+      	oldData = data;
+
+      	if (data == '1') {
+      		io.sockets.emit('click');
+      	};
+      	
+   	}
+   	///////
+   	
+
+}
+ 
+function showPortClose() {
+   console.log('port closed.');
+}
+ 
+function showError(error) {
+   console.log('Serial port error: ' + error);
 }
